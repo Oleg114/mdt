@@ -35,12 +35,12 @@ pipeline {
         }
         stage('arch') {
             when {
-                expression {params.RELEASE == 'RELEASE'}
+                expression {${GIT_BRANCH} == 'master'}
             }
             steps {
                 sh label: '', script: '''cd $WORKSPACE/www/css
                       cd $WORKSPACE/www
-                      tar --exclude=\'./css\' --exclude=\'./js\' -c -z -f ../site-archive-${RELEASE}-${RELEASE_VER}-${BUILD_NUMBER}.tgz .
+                      tar --exclude=\'./css\' --exclude=\'./js\' -c -z -f ../site-archive-${BUILD_NUMBER}.tgz .
                         
                         ''' 
                     archiveArtifacts artifacts: '*.tgz', onlyIfSuccessful: true 
