@@ -35,7 +35,7 @@ pipeline {
         }
         stage('arch') {
             when { branch 'master'}
-            }
+            
             steps {
                 sh label: '', script: '''cd $WORKSPACE/www/css
                       cd $WORKSPACE/www
