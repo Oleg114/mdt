@@ -2,38 +2,47 @@ pipeline {
     agent {
         label 'demo'
     }
-
     stages {
-        stage('Checkout') {
+        stage('checkout') {
             steps {
                 git 'https://github.com/dbielik/mdt'
             }
         }
-        stage('stage 1') {
-            steps {
-                echo 'Stage1'
-            }
-        }
         stage('Parallel') {
+            
             parallel {
-                stage('Stage2-parallel') {
+                stage('cleancss-Parallel1') {
+                    tools {
+                    nodejs 'Node12'
+                     }
                     steps {
-                        echo 'Stage2'
+                        sh label: '', script: '''cd $WORKSPACE/www/css
+                        cleancss -d style.css > ../min/custom-min.css
+                        '''
                     }
                 }
-                stage('Stage3 - parallel') {
+                stage('uglifyjs-Parallel2') {
+                    tools {
+                     nodejs 'Node12'
+                    }
                     steps {
-                        echo 'Stage3'
+                        sh label: '', script: '''cd $WORKSPACE/www/js
+                        uglifyjs --timings init.js -o ../min/custom-min.js
+                        '''
                     }
                 }
             }
         }
-        stage('Optional') {
-            when {
-                expression {params.DOIT == true}
+        stage('arch') {
+            when { branch 'master'}
             }
             steps {
-                echo 'Do It'
+                sh label: '', script: '''cd $WORKSPACE/www/css
+                      cd $WORKSPACE/www
+                      tar --exclude=\'./css\' --exclude=\'./js\' -c -z -f ../site-archive-${BUILD_NUMBER}.tgz .
+                        
+                        ''' 
+                    archiveArtifacts artifacts: '*.tgz', onlyIfSuccessful: true 
             }
         }
     }
