@@ -11,7 +11,7 @@ pipeline {
         stage('Parallel') {
             
             parallel {
-                stage('build1-Parallel') {
+                stage('cleancss-Parallel1') {
                     tools {
                     nodejs 'Node12'
                      }
@@ -21,7 +21,7 @@ pipeline {
                         '''
                     }
                 }
-                stage('build2-Parallel') {
+                stage('uglifyjs-Parallel2') {
                     tools {
                      nodejs 'Node12'
                     }
