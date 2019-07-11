@@ -5,7 +5,7 @@ pipeline {
     stages {
         stage('checkout') {
             steps {
-                git 'https://github.com/dbielik/mdt'
+                checkout scm
             }
         }
         stage('Parallel') {
