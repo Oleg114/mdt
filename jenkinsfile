@@ -1,0 +1,50 @@
+pipeline {
+    agent {
+        label 'demo'
+    }
+    stages {
+        stage('checkout') {
+            steps {
+                git 'https://github.com/dbielik/mdt'
+            }
+        }
+        stage('Parallel') {
+            
+            parallel {
+                stage('build1-Parallel') {
+                    tools {
+                    nodejs 'Node12'
+                     }
+                    steps {
+                        sh label: '', script: '''cd $WORKSPACE/www/css
+                        cleancss -d style.css > ../min/custom-min.css
+                        '''
+                    }
+                }
+                stage('build2-Parallel') {
+                    tools {
+                     nodejs 'Node12'
+                    }
+                    steps {
+                        sh label: '', script: '''cd $WORKSPACE/www/js
+                        uglifyjs --timings init.js -o ../min/custom-min.js
+                        '''
+                    }
+                }
+            }
+        }
+        stage('arch') {
+            when {
+                expression {params.RELEASE == 'RELEASE'}
+            }
+            steps {
+                sh label: '', script: '''cd $WORKSPACE/www/css
+                      cd $WORKSPACE/www
+                      tar --exclude=\'./css\' --exclude=\'./js\' -c -z -f ../site-archive-${RELEASE}-${RELEASE_VER}-${BUILD_NUMBER}.tgz .
+                        
+                        ''' 
+                    archiveArtifacts artifacts: '*.tgz', onlyIfSuccessful: true 
+            }
+        }
+    }
+}
