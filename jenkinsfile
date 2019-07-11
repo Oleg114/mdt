@@ -34,8 +34,7 @@ pipeline {
             }
         }
         stage('arch') {
-            when {
-                expression {${GIT_BRANCH} == 'master'}
+            when { branch 'master'}
             }
             steps {
                 sh label: '', script: '''cd $WORKSPACE/www/css
