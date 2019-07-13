@@ -16,7 +16,9 @@ pipeline {
                     nodejs 'Node12'
                      }
                     steps {
-                        sh label: '', script: '''cd $WORKSPACE/www/css
+                        sh label: '', script: '''
+			echo "START..."
+			cd $WORKSPACE/www/css
                         cleancss -d style.css > ../min/custom-min.css
                         '''
                     }
