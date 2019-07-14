@@ -19,6 +19,7 @@ pipeline {
                         sh label: '', script: '''
 			echo "START..."
 			cd $WORKSPACE/www/css
+			stylelint "*.css"
                         cleancss -d style.css > ../min/custom-min.css
                         '''
                     }
